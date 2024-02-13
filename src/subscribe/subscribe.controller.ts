@@ -31,6 +31,7 @@ export class SubscribeController {
     @Body(ValidationPipe) createSubscribeDto: CreateSubscribeDto,
     @Req() request: Request,
   ): Promise<Subscribe> {
+    //TODO: I only handel subscrie next month ,if have time we can handel if click agin increase time after this and mor validation
     if (!request.headers.authorization) {
       throw new UnauthorizedException('Authentication token is missing');
     }
@@ -56,5 +57,13 @@ export class SubscribeController {
     createSubscribeDto.status = 'active';
 
     return this.subscribeService.save({ ...createSubscribeDto, createdBy: id });
+  }
+
+  @Get()
+  async getSubscribers() {
+    const allSub = await this.subscribeService.find();
+    return {
+      subscribers: allSub,
+    };
   }
 }
