@@ -10,15 +10,17 @@ import {
   Req,
   UseGuards,
   UnauthorizedException,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MagazineService } from './magazine.service';
 import { CreateMagazineDto } from './dto/create-magazine.dto';
 import { ApiCreatedResponse, ApiForbiddenResponse } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
 import { UpdateMagazineDto } from './dto/update-magazine.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('magazine')
 export class MagazineController {
@@ -60,14 +62,32 @@ export class MagazineController {
   async getSingleMagazine(@Param('id') id: string) {
     return await this.magazineService.findOne({ id });
   }
-
+  @UseGuards(AuthGuard)
   @Patch('/:id')
   async updateMagazine(
-    @Param('id') id: string,
+    @Param('id') magazineId: string,
     @Body() updateMagazineDto: UpdateMagazineDto,
+    @Req() request: Request,
   ) {
+    if (!request.headers.authorization) {
+      throw new UnauthorizedException('Authentication token is missing');
+    }
+    const jwt = request.headers.authorization.replace('Bearer ', '');
+    const { id } = await this.jwtService.verifyAsync(jwt);
+
+    const magazine = await this.magazineService.findOne({ id: magazineId });
+    if (!magazine) {
+      throw new NotFoundException('Magazine not found');
+    }
+
+    if (magazine.createdBy !== id) {
+      throw new ForbiddenException(
+        'You are not allowed to update this magazine',
+      );
+    }
+    //TODO:Check if who Update Is The Owner
     const updatedMagazine = await this.magazineService.update(
-      id,
+      magazineId,
       updateMagazineDto,
     );
     if (updatedMagazine) {
