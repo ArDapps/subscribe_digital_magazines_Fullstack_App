@@ -4,6 +4,8 @@ import { MagazineController } from './magazine.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Magazine } from './entities/magazine.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
     }),
     TypeOrmModule.forFeature([Magazine]),
+    UserModule,
   ],
 
   controllers: [MagazineController],

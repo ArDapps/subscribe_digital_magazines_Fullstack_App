@@ -1,5 +1,6 @@
-import { Base } from 'src/communBase/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Base } from '../../communBase/base.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { User } from '../../user/user.entity'; // Adjust the path to your User entity file
 
 @Entity('magazines')
 export class Magazine extends Base {
@@ -11,4 +12,7 @@ export class Magazine extends Base {
 
   @Column('decimal', { precision: 10, scale: 2 })
   monthlyPrice: number;
+
+  @ManyToOne(() => User, (user) => user.magazines) // Many magazines can belong to one user
+  owner: User;
 }
