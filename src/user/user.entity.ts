@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Base } from '../communBase/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Magazine } from 'src/magazine/entities/magazine.entity';
+import { Subscribe } from 'src/subscribe/entities/subscribe.entity';
 
 @Entity('users')
 export class User extends Base {
@@ -20,4 +21,7 @@ export class User extends Base {
 
   @OneToMany(() => Magazine, (magazine) => magazine.owner)
   magazines: Magazine[];
+
+  @OneToMany(() => Subscribe, (subscribe) => subscribe.user)
+  subscribes: Subscribe[];
 }

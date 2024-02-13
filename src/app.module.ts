@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { UserService } from './user/user.service';
 import { MagazineModule } from './magazine/magazine.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MagazineModule } from './magazine/magazine.module';
     UserModule,
     AuthModule,
     MagazineModule,
+    SubscribeModule,
   ],
 
   controllers: [],
