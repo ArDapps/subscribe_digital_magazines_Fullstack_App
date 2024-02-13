@@ -17,6 +17,7 @@ import { ApiCreatedResponse, ApiForbiddenResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
+import { UUID } from 'crypto';
 
 @Controller('magazine')
 export class MagazineController {
@@ -52,5 +53,25 @@ export class MagazineController {
   @Get()
   async getMagazines() {
     return this.magazineService.find();
+  }
+
+  @Get('/:id')
+  async getSingleMagazine(@Param('id') id: string) {
+    return await this.magazineService.findOne({ id });
+  }
+
+  @Delete('/:id')
+  async deleteMagazine(@Param('id') id: string) {
+    const itemDeleted = await this.magazineService.delete(id);
+
+    if (itemDeleted.affected === 1) {
+      return {
+        message: 'Item Deleted Sucessfully',
+      };
+    } else {
+      return {
+        message: 'No Item With this id',
+      };
+    }
   }
 }
