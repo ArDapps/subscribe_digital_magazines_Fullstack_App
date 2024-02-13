@@ -18,6 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
+import { UpdateMagazineDto } from './dto/update-magazine.dto';
 
 @Controller('magazine')
 export class MagazineController {
@@ -58,6 +59,27 @@ export class MagazineController {
   @Get('/:id')
   async getSingleMagazine(@Param('id') id: string) {
     return await this.magazineService.findOne({ id });
+  }
+
+  @Patch('/:id')
+  async updateMagazine(
+    @Param('id') id: string,
+    @Body() updateMagazineDto: UpdateMagazineDto,
+  ) {
+    const updatedMagazine = await this.magazineService.update(
+      id,
+      updateMagazineDto,
+    );
+    if (updatedMagazine) {
+      return {
+        message: 'Magazine updated successfully',
+        updatedMagazine,
+      };
+    } else {
+      return {
+        message: 'No magazine found with this id',
+      };
+    }
   }
 
   @Delete('/:id')
