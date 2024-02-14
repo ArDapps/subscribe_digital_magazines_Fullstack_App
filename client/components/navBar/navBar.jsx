@@ -1,28 +1,40 @@
 "use client";
-import { Fragment, useState } from "react";
-import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
+import { useState } from "react";
+import { Dialog, Disclosure, Popover } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+
 import { NavBarItems } from "@/constants/navBarItems";
 import { NavItem } from "../navItem";
 import Image from "next/image";
 import logo from "@/public/Logo.jpeg";
 import Link from "next/link";
 
+import { useDispatch, useSelector } from "react-redux";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { LogOutUser } from "@/redux/slices/authApiCall";
+
 export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    if (user != null || user != undefined) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [user]);
+
+  const lougOutHandler = () => {
+    dispatch(LogOutUser());
+    router.push("/");
+  };
 
   return (
     <header className="bg-white">
@@ -53,21 +65,33 @@ export default function NavBar() {
             </div>
           ))}
         </Popover.Group>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link
-            href="/login"
-            className="text-sm font-semibold leading-6 text-main-blue"
-          >
-            Log In
-          </Link>
-          <span className="m-3" />
-          <Link
-            href="/create-account"
-            className="text-sm font-semibold leading-6 text-black"
-          >
-            Register
-          </Link>
-        </div>
+
+        {isLogin ? (
+          <div className="pl-12 ">
+            <button
+              onClick={lougOutHandler}
+              className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 bg-main-blue text-white hover:bg-red-700"
+            >
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <div className="py-6 flex pl-12  ">
+            <Link
+              href="/login"
+              className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-main-blue hover:bg-gray-50 "
+            >
+              Log In
+            </Link>
+            <span className="m-3" />
+            <Link
+              href="/create-account"
+              className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-main-blue hover:bg-gray-50"
+            >
+              Register
+            </Link>
+          </div>
+        )}
       </nav>
       <Dialog
         as="div"
@@ -107,21 +131,33 @@ export default function NavBar() {
                   </div>
                 ))}
               </div>
-              <div className="py-6">
-                <Link
-                  href="/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-main-blue hover:bg-gray-50"
-                >
-                  Log In
-                </Link>
-                <span className="m-3" />
-                <Link
-                  href="/create-account"
-                  className="text-sm font-semibold leading-6 text-black"
-                >
-                  Register
-                </Link>
-              </div>
+
+              {isLogin ? (
+                <div className="pl-12">
+                  <button
+                    onClick={lougOutHandler}
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 bg-main-blue text-white hover:bg-red-700"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <div className="py-6">
+                  <Link
+                    href="/login"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-main-blue hover:bg-gray-50"
+                  >
+                    Log In
+                  </Link>
+                  <span className="m-3" />
+                  <Link
+                    href="/create-account"
+                    className="text-sm font-semibold leading-6 text-black"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </Dialog.Panel>
