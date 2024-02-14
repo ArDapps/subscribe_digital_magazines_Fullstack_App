@@ -129,11 +129,14 @@ export class SubscribeService extends AbstractService {
     return await this.subscribeRepository.save(subscription);
   }
 
-  async findAllSubscribersByMagazineId(
+  async findAllSubscriptionsByMagazineId(
     magazineId: string,
   ): Promise<Subscribe[]> {
-    return this.subscribeRepository.find({
+    const allSubscriptions = await this.subscribeRepository.find({
       where: { magazine: { id: magazineId } },
+      relations: ['user'], // Eager load both user and magazine relations
     });
+
+    return allSubscriptions;
   }
 }

@@ -42,10 +42,10 @@ export class SubscribeController {
   ): Promise<Subscribe> {
     return this.subscribeService.cancelSubscription(subscriptionId, request);
   }
-  @Get('/:magazineId')
+  @Get('/MagazineSubscribers/:magazineId')
   async getSubscribers(@Param('magazineId') magazineId: string) {
     const subscribers =
-      await this.subscribeService.findAllSubscribersByMagazineId(magazineId);
+      await this.subscribeService.findAllSubscriptionsByMagazineId(magazineId);
     return {
       subscribers,
     };
