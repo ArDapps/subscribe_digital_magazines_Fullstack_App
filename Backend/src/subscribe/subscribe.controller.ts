@@ -12,11 +12,12 @@ import {
 } from '@nestjs/common';
 import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
-import { UpdateSubscribeDto } from './dto/update-subscribe.dto';
+
 import { Subscribe } from './entities/subscribe.entity';
 import { JwtService } from '@nestjs/jwt';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
+import { subscribe } from 'diagnostics_channel';
 
 @Controller('subscribe')
 export class SubscribeController {
@@ -28,42 +29,34 @@ export class SubscribeController {
 
   @Post()
   async create(
-    @Body(ValidationPipe) createSubscribeDto: CreateSubscribeDto,
+    @Body() createSubscribeDto: CreateSubscribeDto,
     @Req() request: Request,
   ): Promise<Subscribe> {
-    //TODO: I only handel subscrie next month ,if have time we can handel if click agin increase time after this and mor validation
-    if (!request.headers.authorization) {
-      throw new UnauthorizedException('Authentication token is missing');
-    }
-    const jwt = request.headers.authorization.replace('Bearer ', '');
-
-    const { id } = await this.jwtService.verifyAsync(jwt);
-
-    const user = await this.userService.findOne({ id });
-
-    if (!id) {
-      throw new UnauthorizedException(
-        'Authentication token is Expired,please login again',
-      );
-    }
-    createSubscribeDto.startTime = new Date();
-
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-
-    createSubscribeDto.endTime = endDate;
-
-    createSubscribeDto.userId = id;
-    createSubscribeDto.status = 'active';
-
-    return this.subscribeService.save({ ...createSubscribeDto, createdBy: id });
+    return this.subscribeService.create(createSubscribeDto, request);
   }
 
-  @Get()
-  async getSubscribers() {
-    const allSub = await this.subscribeService.find();
+  @Post('/cancelSubscribe')
+  async cancel(
+    @Body('subscriptionId') subscriptionId: string, // Specify the key for the subscribeId in the request body
+    @Req() request: Request,
+  ): Promise<Subscribe> {
+    return this.subscribeService.cancelSubscription(subscriptionId, request);
+  }
+  @Get('/:magazineId')
+  async getSubscribers(@Param('magazineId') magazineId: string) {
+    const subscribers =
+      await this.subscribeService.findAllSubscribersByMagazineId(magazineId);
     return {
-      subscribers: allSub,
+      subscribers,
+    };
+  }
+
+  @Get('/userSubscribtion/:userId')
+  async getUserSubscribers(@Param('userId') userId: string) {
+    const subscribers =
+      await this.subscribeService.findAllSubscriptionsByUserId(userId);
+    return {
+      subscribers,
     };
   }
 }

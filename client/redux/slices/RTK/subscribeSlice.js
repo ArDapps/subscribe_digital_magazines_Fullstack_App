@@ -1,26 +1,26 @@
 import CookieService from "@/utils/CookieService";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const magazineApiSlice = createApi({
-  reducerPath: "magazine",
+export const subscribeApiSlice = createApi({
+  reducerPath: "subscribe",
 
   reducer: (state, action) => {
     console.log(action.type, action.payload);
     // ... existing reducer logic
   },
 
-  tagTypes: ["magazine"],
+  tagTypes: ["subscribe"],
 
   refetchOnReconnect: true,
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_END_POINT }),
   endpoints: (builder) => ({
-    getMagazineDataList: builder.query({
+    getsubscribeDataList: builder.query({
       query: (arg) => {
         let loginUser = CookieService.get("userInfo");
 
         return {
-          url: `magazine`,
+          url: `subscribe`,
           headers: {
             Authorization: `Bearer ${loginUser.token}`,
           },
@@ -28,16 +28,19 @@ export const magazineApiSlice = createApi({
       },
       providesTags: (result, error, arg) =>
         result
-          ? [...result.map(({ id }) => ({ type: "Magazine", id })), "Magazine"]
-          : ["Magazine"],
+          ? [
+              ...result.map(({ id }) => ({ type: "subscribe", id })),
+              "subscribe",
+            ]
+          : ["subscribe"],
     }),
 
-    getSingleMagazine: builder.query({
+    getSinglesubscribe: builder.query({
       query: (arg) => {
         let loginUser = CookieService.get("userInfo");
 
         return {
-          url: `magazine/${arg}`,
+          url: `subscribe/${arg}`,
           headers: {
             Authorization: `Bearer ${loginUser.token}`,
           },
@@ -45,30 +48,30 @@ export const magazineApiSlice = createApi({
       },
     }),
 
-    //AddMagazineTypesToSpecialEvent
-    addMagazine: builder.mutation({
+    //AddsubscribeTypesToSpecialEvent
+    addsubscribe: builder.mutation({
       query: (arg) => {
-        console.log(arg, "addMagazine");
+        console.log({ magazineId: arg }, "addsubscribe");
         let loginUser = CookieService.get("userInfo");
 
         return {
-          url: `magazine/create`,
+          url: `subscribe/`,
           method: "POST",
-          body: arg,
+          body: { magazineId: arg },
           headers: {
             Authorization: `Bearer ${loginUser.token}`,
           },
         };
       },
       invalidatesTags: (result, error, arg) => [
-        { type: "Magazine", id: arg.id },
+        { type: "subscribe", id: arg.id },
       ],
     }),
   }),
 });
 
 export const {
-  useGetMagazineDataListQuery,
-  useGetSingleMagazineQuery,
-  useAddMagazineMutation,
-} = magazineApiSlice;
+  useGetsubscribeDataListQuery,
+  useGetSinglesubscribeQuery,
+  useAddsubscribeMutation,
+} = subscribeApiSlice;

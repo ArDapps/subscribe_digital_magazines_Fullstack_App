@@ -5,6 +5,9 @@ import { Subscribe } from './entities/subscribe.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
+import { User } from 'src/user/user.entity';
+import { Magazine } from 'src/magazine/entities/magazine.entity';
+import { MagazineService } from 'src/magazine/magazine.service';
 
 @Module({
   imports: [
@@ -14,11 +17,11 @@ import { UserModule } from 'src/user/user.module';
         expiresIn: 45633600,
       },
     }),
-    TypeOrmModule.forFeature([Subscribe]),
+    TypeOrmModule.forFeature([Subscribe, User, Magazine]),
     UserModule,
   ],
   controllers: [SubscribeController],
-  providers: [SubscribeService],
+  providers: [SubscribeService, MagazineService],
   exports: [SubscribeService],
 })
 export class SubscribeModule {}
