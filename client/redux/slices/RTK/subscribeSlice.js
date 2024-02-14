@@ -14,6 +14,8 @@ export const subscribeApiSlice = createApi({
   refetchOnReconnect: true,
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_END_POINT }),
+  tagTypes: ["Subscribe"], // Add 'Subscribe' to tagTypes
+
   endpoints: (builder) => ({
     getsubscribeDataList: builder.query({
       query: (arg) => {
@@ -29,10 +31,32 @@ export const subscribeApiSlice = createApi({
       providesTags: (result, error, arg) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "subscribe", id })),
-              "subscribe",
+              ...result.subscribers.map(({ id }) => ({
+                type: "Subscribe",
+                id,
+              })),
+              "Subscribe",
             ]
-          : ["subscribe"],
+          : ["Subscribe"],
+    }),
+
+    cancelSubscribe: builder.mutation({
+      query: (subscriptionId) => {
+        console.log({ subscriptionId: subscriptionId }, "cancelSubscribe");
+        let loginUser = CookieService.get("userInfo");
+
+        return {
+          url: `subscribe/cancelSubscribe/`,
+          method: "POST",
+          body: { subscriptionId: subscriptionId },
+          headers: {
+            Authorization: `Bearer ${loginUser.token}`,
+          },
+        };
+      },
+      invalidatesTags: (result, error, subscriptionId) => [
+        { type: "Subscribe", id: subscriptionId },
+      ],
     }),
 
     getSinglesubscribe: builder.query({
@@ -41,6 +65,21 @@ export const subscribeApiSlice = createApi({
 
         return {
           url: `subscribe/${arg}`,
+          headers: {
+            Authorization: `Bearer ${loginUser.token}`,
+          },
+        };
+      },
+    }),
+
+    getUserSubscribtions: builder.query({
+      query: () => {
+        let loginUser = CookieService.get("userInfo");
+
+        console.log(loginUser, "loginUser");
+
+        return {
+          url: `subscribe/userSubscribtion/${loginUser.id}`,
           headers: {
             Authorization: `Bearer ${loginUser.token}`,
           },
@@ -63,9 +102,6 @@ export const subscribeApiSlice = createApi({
           },
         };
       },
-      invalidatesTags: (result, error, arg) => [
-        { type: "subscribe", id: arg.id },
-      ],
     }),
   }),
 });
@@ -73,5 +109,7 @@ export const subscribeApiSlice = createApi({
 export const {
   useGetsubscribeDataListQuery,
   useGetSinglesubscribeQuery,
+  useGetUserSubscribtionsQuery,
   useAddsubscribeMutation,
+  useCancelSubscribeMutation,
 } = subscribeApiSlice;

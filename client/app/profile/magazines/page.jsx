@@ -27,7 +27,7 @@ const Magazines = () => {
             .reverse()
             .map((magazine, index) => (
               <div
-                className="bg-main-blue text-white m-3 p-3 rounded-md"
+                className=" bg-gradient-to-r to-sky-700 from-main-blue text-white m-3 p-3 rounded-md"
                 key={index}
               >
                 <Link href={`/profile/magazines/${magazine.id}`}>

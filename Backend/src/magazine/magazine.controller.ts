@@ -15,14 +15,18 @@ import {
 } from '@nestjs/common';
 import { MagazineService } from './magazine.service';
 import { CreateMagazineDto } from './dto/create-magazine.dto';
-import { ApiCreatedResponse, ApiForbiddenResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { UUID } from 'crypto';
 import { UpdateMagazineDto } from './dto/update-magazine.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserService } from 'src/user/user.service';
-
+@ApiTags('Magazine')
 @Controller('magazine')
 export class MagazineController {
   constructor(

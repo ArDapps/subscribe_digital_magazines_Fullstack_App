@@ -18,7 +18,9 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { subscribe } from 'diagnostics_channel';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Subscribe')
 @Controller('subscribe')
 export class SubscribeController {
   constructor(

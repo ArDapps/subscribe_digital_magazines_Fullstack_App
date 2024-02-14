@@ -1,6 +1,7 @@
 "use client";
 import { useGetSingleMagazineQuery } from "@/redux/slices/RTK/magazineSlice";
 import { useAddsubscribeMutation } from "@/redux/slices/RTK/subscribeSlice";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const page = ({ params }) => {
@@ -16,8 +17,12 @@ const page = ({ params }) => {
   const [subscribe, { isLoading: isaddedSubscribeLoading, isSuccess }] =
     useAddsubscribeMutation();
 
+  const router = useRouter();
+
   const subscribeJoin = async () => {
     await subscribe(params.magazineId);
+
+    router.push("/profile");
   };
 
   return (

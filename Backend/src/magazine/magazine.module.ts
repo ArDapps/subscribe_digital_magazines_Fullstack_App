@@ -12,7 +12,7 @@ import { UserModule } from 'src/user/user.module';
     JwtModule.register({
       secret: 'MySecretKEY',
       signOptions: {
-        expiresIn: 45633600,
+        expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds,
       },
     }),
     TypeOrmModule.forFeature([Magazine]),

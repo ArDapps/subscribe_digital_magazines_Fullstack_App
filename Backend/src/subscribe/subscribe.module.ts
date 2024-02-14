@@ -14,7 +14,7 @@ import { MagazineService } from 'src/magazine/magazine.service';
     JwtModule.register({
       secret: 'MySecretKEY',
       signOptions: {
-        expiresIn: 45633600,
+        expiresIn: 47 * 24 * 60 * 60, // 7 days in seconds
       },
     }),
     TypeOrmModule.forFeature([Subscribe, User, Magazine]),

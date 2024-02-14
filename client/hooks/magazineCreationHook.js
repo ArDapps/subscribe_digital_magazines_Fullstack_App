@@ -28,9 +28,9 @@ const MagazineCreationHook = () => {
   const [nexLoading, setNexLoading] = useState(false);
 
   const router = useRouter();
-
   const [addMagazine, { isLoading: isaddedLoading, isSuccess }] =
     useAddMagazineMutation();
+
   const onSubmit = async (data) => {
     data.monthlyPrice = parseInt(data.monthlyPrice);
 
