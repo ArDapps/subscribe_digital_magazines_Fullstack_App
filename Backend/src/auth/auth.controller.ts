@@ -50,12 +50,20 @@ export class AuthController {
 
     const hashed_password = await bcrypt.hash(body.password, 12);
 
-    return this.userService.save({
+    const userAdded = await this.userService.save({
       ...data,
       password: hashed_password,
       createdBy: data.email,
       lastChangedBy: data.email,
     });
+
+    const jwt = await this.jwtService.signAsync({
+      id: userAdded.id,
+    });
+    return {
+      userAdded,
+      token: jwt,
+    };
   }
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
@@ -85,10 +93,11 @@ export class AuthController {
       id: user.id,
     });
 
-    response.cookie('jwt', jwt, { httpOnly: true });
+    //response.cookie('jwt', jwt, { httpOnly: true });
 
     return {
       message: 'Login Success',
+      id: user.id,
       token: jwt,
     };
   }
