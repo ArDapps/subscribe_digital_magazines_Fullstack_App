@@ -33,3 +33,4 @@ cd Client
 npm install
 npm run dev
 ```
+ ![screencapture-localhost-5050-api-2024-02-15-08_35_36](https://github.com/ArDapps/subscribe_digital_magazines_Fullstack_App/assets/91119772/212068b1-d588-4f4c-bc63-523f4d8ca0c2)
